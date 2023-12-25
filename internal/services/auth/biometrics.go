@@ -12,7 +12,7 @@ var (
 	upperThreshold = 1.5
 )
 
-func (a *Auth) checkBiometrics(ctx context.Context, user models.User, inputPressTimes, inputIntervalTimes []int64) (bool, error) {
+func (a *Auth) checkBiometrics(ctx context.Context, user models.User, inputPressTimes, inputIntervalTimes []float32) (bool, error) {
 	const op = "auth.checkBiometrics"
 	pressTimes := user.PressTimes
 	intervalTimes := user.PressIntervals
@@ -41,17 +41,6 @@ func (a *Auth) checkBiometrics(ctx context.Context, user models.User, inputPress
 
 }
 
-// TODO в отдельный сервис
-// checkDifference returns true if the absolute difference between first and second is greater than difference.
-//
-// Parameters:
-//
-//	first, second: the two float64 numbers to compare.
-//	difference: the threshold value for the absolute difference.
-//
-// Returns:
-//
-//	bool: true if the absolute difference is greater than difference, false otherwise.
 func checkDifference(input, needed, lowerThreshold, upperThreshold float64) bool {
 
 	x := math.Abs(input - needed)

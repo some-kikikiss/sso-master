@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
-	ssov1 "github.com/some-kikikiss/protos/gen/go/sso"
+	ssov1 "github.com/some-kikikiss/protos-sso/gen/go/sso"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -17,17 +17,8 @@ type serverAPI struct {
 	auth Auth
 }
 type Auth interface {
-	Login(
-		ctx context.Context,
-		email string,
-		password string,
-		pressTimes []int64,
-		intervalTimes []int64,
-		appID int) (token string, err error)
-	RegisterNewUser(ctx context.Context, email string,
-		password string,
-		pressTimes []int64,
-		intervalTimes []int64) (userID int64, err error)
+	Login(ctx context.Context, email string, password string, pressTimes []float32, intervalTimes []float32, appID int) (token string, err error)
+	RegisterNewUser(ctx context.Context, email string, password string, pressTimes []float32, intervalTimes []float32) (userID int64, err error)
 	IsAdmin(ctx context.Context, userID int64) (bool, error)
 }
 

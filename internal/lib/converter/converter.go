@@ -6,10 +6,10 @@ import (
 	"strings"
 )
 
-func ToStringFromInt64Slice(slice []int64) string {
+func ToStringFromFloat32Slice(slice []float32) string {
 	var strSlice []string
 	for _, v := range slice {
-		strSlice = append(strSlice, fmt.Sprintf("%d", v))
+		strSlice = append(strSlice, fmt.Sprintf("%f", v))
 	}
 	return strings.Join(strSlice, ",")
 }
@@ -30,12 +30,12 @@ func ToInt64SliceFromFloat64Slice(slice []float64) []int64 {
 	return intSlice
 }
 
-func ToInt64SliceFromString(str string) []int64 {
-	var intSlice []int64
+func ToFloat32SliceFromString(str string) []float32 {
+	var float32s []float32
 	for _, v := range strings.Split(str, ",") {
 		// TODO check error
-		value, _ := strconv.Atoi(v)
-		intSlice = append(intSlice, int64(value))
+		value, _ := strconv.ParseFloat(v, 32)
+		float32s = append(float32s, float32(value))
 	}
-	return intSlice
+	return float32s
 }

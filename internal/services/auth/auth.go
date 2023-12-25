@@ -32,11 +32,7 @@ type Auth struct {
 }
 
 type UserSaver interface {
-	SaveUser(ctx context.Context,
-		email string,
-		passHash []byte,
-		pressTimes []int64,
-		intervalTimes []int64) (userID int64, err error)
+	SaveUser(ctx context.Context, email string, passHash []byte, pressTimes []float32, intervalTimes []float32) (userID int64, err error)
 }
 
 type UserProvider interface {
@@ -65,14 +61,7 @@ func New(
 	}
 }
 
-func (a *Auth) Login(
-	ctx context.Context,
-	email string,
-	password string,
-	pressTimes []int64,
-	intervalTimes []int64,
-	appID int,
-) (string, error) {
+func (a *Auth) Login(ctx context.Context, email string, password string, pressTimes []float32, intervalTimes []float32, appID int) (string, error) {
 	const op = "auth.Login"
 
 	log := a.log.With(
@@ -119,13 +108,7 @@ func (a *Auth) Login(
 	return token, nil
 }
 
-func (a *Auth) RegisterNewUser(
-	ctx context.Context,
-	email string,
-	password string,
-	pressTimes []int64,
-	intervalTimes []int64,
-) (int64, error) {
+func (a *Auth) RegisterNewUser(ctx context.Context, email string, password string, pressTimes []float32, intervalTimes []float32) (int64, error) {
 	const op = "auth.RegisterNewUser"
 
 	log := a.log.With(
@@ -181,50 +164,3 @@ func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 
 	return isAdmin, nil
 }
-
-// TODO в отдельный сервис
-/*func (a *Auth) checkBiometrics(ctx context.Context, user models.User, inputPressTimes, inputIntervalTimes []int64) (bool, error) {
-	const op = "auth.checkBiometrics"
-	pressTimes := user.PressTimes
-	intervalTimes := user.PressIntervals
-	pressIncrement := 0
-	intervalIncrement := 0
-	for i, inputPressTime := range inputPressTimes {
-		if !checkDifference(float64(inputPressTime), float64(pressTimes[i]), lowerThreshold, upperThreshold) {
-			pressIncrement++
-		}
-	}
-
-	for i, inputIntervalTime := range inputIntervalTimes {
-		if !checkDifference(float64(inputIntervalTime), float64(intervalTimes[i]), lowerThreshold, upperThreshold) {
-			intervalIncrement++
-		}
-	}
-
-	if pressIncrement < len(pressTimes) {
-		return false, fmt.Errorf("%s: %w", op, ErrPressTimesInvalid)
-	}
-
-	if intervalIncrement < len(intervalTimes) {
-		return false, fmt.Errorf("%s: %w", op, ErrIntervalTimesInvalid)
-	}
-	return true, nil
-
-}
-
-// TODO в отдельный сервис
-// checkDifference returns true if the absolute difference between first and second is greater than difference.
-//
-// Parameters:
-//
-//	first, second: the two float64 numbers to compare.
-//	difference: the threshold value for the absolute difference.
-//
-// Returns:
-//
-//	bool: true if the absolute difference is greater than difference, false otherwise.
-func checkDifference(input, needed, lowerThreshold, upperThreshold float64) bool {
-
-	x := math.Abs(input - needed)
-	return x > lowerThreshold && x < upperThreshold
-}*/

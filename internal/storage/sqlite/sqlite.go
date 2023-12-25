@@ -76,7 +76,7 @@ func (s *Storage) Close() error {
 	return s.db.Close()
 }
 
-func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte, pressTimes []int64, intervalTimes []int64) (int64, error) {
+func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte, pressTimes []float32, intervalTimes []float32) (int64, error) {
 	const op = "storage.sqlite.SaveUser"
 
 	stmt, err := s.db.Prepare("INSERT INTO users (email, pass_hash) VALUES (?, ?)")
@@ -102,8 +102,8 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte, p
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
-	intervals := converter.ToStringFromInt64Slice(intervalTimes)
-	times := converter.ToStringFromInt64Slice(pressTimes)
+	intervals := converter.ToStringFromFloat32Slice(intervalTimes)
+	times := converter.ToStringFromFloat32Slice(pressTimes)
 	res, err = stmt.ExecContext(ctx, id, intervals, times)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
