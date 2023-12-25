@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS key_press_data;
+DROP TABLE IF EXISTS apps;
+DROP TABLE IF EXISTS users;
