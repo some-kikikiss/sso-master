@@ -85,6 +85,7 @@ func (a *Auth) Login(ctx context.Context, email string, password string, pressTi
 	if err := bcrypt.CompareHashAndPassword(user.PassHash, []byte(password)); err != nil {
 		a.log.Error("invalid credentials", sl.Err(err))
 	}
+
 	biometricCheck, err := a.checkBiometrics(ctx, user, pressTimes, intervalTimes)
 
 	if !biometricCheck || err != nil {

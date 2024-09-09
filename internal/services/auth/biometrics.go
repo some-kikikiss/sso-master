@@ -18,23 +18,25 @@ func (a *Auth) checkBiometrics(ctx context.Context, user models.User, inputPress
 	intervalTimes := user.PressIntervals
 	pressIncrement := 0
 	intervalIncrement := 0
-	for i, inputPressTime := range inputPressTimes {
+	for i := 0; i < len(inputPressTimes); i++ {
+		inputPressTime := inputPressTimes[i]
 		if !checkDifference(float64(inputPressTime), float64(pressTimes[i]), lowerThreshold, upperThreshold) {
 			pressIncrement++
 		}
 	}
 
-	for i, inputIntervalTime := range inputIntervalTimes {
+	for i := 0; i < len(inputIntervalTimes); i++ {
+		inputIntervalTime := inputIntervalTimes[i]
 		if !checkDifference(float64(inputIntervalTime), float64(intervalTimes[i]), lowerThreshold, upperThreshold) {
 			intervalIncrement++
 		}
 	}
 
-	if pressIncrement < len(pressTimes) {
+	if pressIncrement < len(pressTimes)/2 {
 		return false, fmt.Errorf("%s: %w", op, ErrPressTimesInvalid)
 	}
 
-	if intervalIncrement < len(intervalTimes) {
+	if intervalIncrement < len(intervalTimes)/2 {
 		return false, fmt.Errorf("%s: %w", op, ErrIntervalTimesInvalid)
 	}
 	return true, nil

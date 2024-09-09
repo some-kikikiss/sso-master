@@ -98,7 +98,7 @@ func (s *Storage) SaveUser(ctx context.Context, email string, passHash []byte, p
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	stmt, err = s.db.Prepare("INSERT INTO key_press_data (user_id, intervals, times) VALUES (?, ?, ?)")
+	stmt, err = s.db.Prepare("INSERT INTO key_press_data (user_id, key_press_intervals,key_press_times) VALUES (?, ?, ?)")
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
@@ -130,6 +130,21 @@ func (s *Storage) User(ctx context.Context, email string) (models.User, error) {
 		}
 		return models.User{}, fmt.Errorf("%s: %w", op, err)
 	}
+	stmt, err = s.db.Prepare("SELECT key_press_intervals, key_press_times FROM key_press_data WHERE user_id = ?")
+	if err != nil {
+		return models.User{}, fmt.Errorf("%s: %w", op, err)
+	}
 
+	row = stmt.QueryRowContext(ctx, user.ID)
+	strIntervals, strTimes := "", ""
+	err = row.Scan(&strIntervals, &strTimes)
+	user.PressTimes = converter.ToFloat32SliceFromString(strTimes)
+	user.PressIntervals = converter.ToFloat32SliceFromString(strIntervals)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.User{}, fmt.Errorf("%s: %w", op, storage.ErrUserNotFound)
+		}
+		return models.User{}, fmt.Errorf("%s: %w", op, err)
+	}
 	return user, nil
 }

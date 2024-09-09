@@ -4,6 +4,6 @@ type User struct {
 	ID             int64
 	Email          string
 	PassHash       []byte
-	PressTimes     []int64
-	PressIntervals []int64
+	PressTimes     []float32
+	PressIntervals []float32
 }
